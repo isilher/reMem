@@ -158,7 +158,21 @@ export default class App extends React.Component {
 
     return (
       <View style={styles.mainContainer}>
-        <Text style={styles.titleStyle}>You are logged in!</Text>
+        <Text style={styles.titleStyle}>Your notes:</Text>
+        <View style={styles.notesContainer}>
+          <View style={styles.noteStyle}>
+            <Text style={styles.noteTextStyle}>
+              Donec ullamcorper nulla non metus auctor fringilla. Cras mattis consectetur purus sit amet fermentum.
+            </Text>
+          </View>
+        </View>
+        <View style={styles.notesContainer}>
+          <View style={styles.noteStyle}>
+            <Text style={styles.noteTextStyle}>
+              Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Nullam quis risus eget urna mollis ornare vel eu leo.
+            </Text>
+          </View>
+        </View>
         <Button title="Log out" onPress={this.logOut} />
         <Button title="Destroy pin" onPress={this.destroyPin} />
       </View>
@@ -211,5 +225,18 @@ const styles = StyleSheet.create({
   touchIdButtonStyle: {
     width: 100,
     height: 100,
-  }
+  },
+  notesContainer: {
+    flex: 1,
+  },
+  noteStyle: {
+    flex: 1,
+    marginVertical: 5,
+    borderWidth: 1,
+    borderColor: 'grey',
+    padding: 10,
+  },
+  noteTextStyle: {
+    fontSize: 18,
+  },
 });
