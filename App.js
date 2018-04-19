@@ -8,7 +8,9 @@ import {
   TouchableOpacity,
   Image,
   ImageBackground,
+  AccessibilityInfo,
 } from 'react-native';
+import AccessibleTextButton from './components/AccessibleTextButton'
 
 const TOUCH_ID_AVAILABLE = Expo.Fingerprint.hasHardwareAsync() && Expo.Fingerprint.isEnrolledAsync()
 
@@ -21,16 +23,25 @@ export default class App extends React.Component {
     this.authenticateWithTouch = this.authenticateWithTouch.bind(this)
     this.authenticateWithTouch = this.authenticateWithTouch.bind(this)
     this.authenticateWithPin = this.authenticateWithPin.bind(this)
+    this.setUpAccessability = this.setUpAccessability.bind(this)
 
     this.state = {
       authenticated: false,
       pinSet: false,
       pinText: '',
+      screenReaderActive: false,
     }
   }
 
   componentDidMount() {
     this.checkPin()
+    this.setUpAccessability()
+  }
+
+  async setUpAccessability() {
+    result = await AccessibilityInfo.fetch()
+    console.log('screen reader active? ', result)
+    this.setState({ screenReaderActive: result })
   }
 
   async checkPin() {
@@ -119,6 +130,8 @@ export default class App extends React.Component {
   }
 
   renderLogin = () => {
+    const blockLogin = this.state.pinText.length < 5
+
     return (
       <View style={styles.mainContainer}>
         <Text style={styles.titleStyle}>
@@ -128,11 +141,11 @@ export default class App extends React.Component {
           Please log in with your pin code.
         </Text>
         { this.renderPinInput() }
-        <Button
-          accessible
+        <AccessibleTextButton
           title="Log in with pin"
           onPress={this.authenticateWithPin}
-          disabled={this.state.pinText.length < 5}
+          disabled={blockLogin}
+          accessibilityLabel={blockLogin ? 'Log in with pin. Enter your pin code first.' : null}
         />
         { TOUCH_ID_AVAILABLE && this.renderTouchIdAuth() }
       </View>
@@ -149,7 +162,7 @@ export default class App extends React.Component {
           Please set a pincode to protect your notes.
         </Text>
         { this.renderPinInput() }
-        <Button
+        <AccessibleTextButton
           title="Set pin"
           onPress={this.setPin}
           disabled={this.state.pinText.length < 5}
@@ -190,13 +203,15 @@ export default class App extends React.Component {
           {this.renderNote('Nothing is impossible, the word itself says "I\'m possible"!', 'Audrey Hepburn')}
           {this.renderNote('Fantasy is hardly an escape from reality. It\'s a way of understanding it.', 'Lloyd Alexander')}
         </View>
-        <Button title="Log out" onPress={this.logOut} />
-        <Button title="Destroy pin" onPress={this.destroyPin} />
+        <AccessibleTextButton title="Log out" onPress={this.logOut} />
+        <AccessibleTextButton title="Destroy pin" onPress={this.destroyPin} />
       </View>
     )
   }
 
   render() {
+    if (this.state.screenReaderActive) { return this.renderContent() }
+
     return (
       <ImageBackground
         source={require('./assets/pen-bg.png')}
