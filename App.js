@@ -210,6 +210,7 @@ export default class App extends React.Component {
   }
 
   render() {
+    // Skip the background image for visually impaired users
     if (this.state.screenReaderActive) { return this.renderContent() }
 
     return (
