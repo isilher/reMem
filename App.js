@@ -83,7 +83,12 @@ export default class App extends React.Component {
 
   renderTouchIdAuth = () => {
     return(
-      <View style={styles.touchIdButtonWrapperStyle}>
+      <View
+        accessible
+        style={styles.touchIdButtonWrapperStyle}
+        accessibilityLabel="Log in with Touch ID"
+        accessibilityTraits={['button']}
+      >
         <TouchableOpacity onPress={this.authenticateWithTouch}>
           <Image
             source={require('./assets/touch-id.png')}
@@ -124,6 +129,7 @@ export default class App extends React.Component {
         </Text>
         { this.renderPinInput() }
         <Button
+          accessible
           title="Log in with pin"
           onPress={this.authenticateWithPin}
           disabled={this.state.pinText.length < 5}
@@ -152,26 +158,37 @@ export default class App extends React.Component {
     );
   }
 
+  renderNote = (text, author) => {
+    return (
+      <View
+        accessible
+        style={styles.noteStyle}
+        accessibilityTraits={['text']}
+        accessibilityLabel={`Note: ${text} Author: ${author}`}
+      >
+        <Text style={styles.noteTextStyle}>{text}</Text>
+        <Text style={styles.authorTextStyle}>- {author}</Text>
+      </View>
+    )
+  }
+
   renderContent = () => {
     if (!this.state.pinSet) { return this.renderRegistration() }
     if (!this.state.authenticated) { return this.renderLogin() }
 
     return (
       <View style={styles.mainContainer}>
-        <Text style={styles.titleStyle}>Your notes:</Text>
+        <Text
+          accessible
+          style={styles.titleStyle}
+          accessibilityTraits={['title']}
+        >
+          Your notes:
+        </Text>
         <View style={styles.notesContainer}>
-          <View style={styles.noteStyle}>
-            <Text style={styles.noteTextStyle}>
-              Donec ullamcorper nulla non metus auctor fringilla. Cras mattis consectetur purus sit amet fermentum.
-            </Text>
-          </View>
-        </View>
-        <View style={styles.notesContainer}>
-          <View style={styles.noteStyle}>
-            <Text style={styles.noteTextStyle}>
-              Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Nullam quis risus eget urna mollis ornare vel eu leo.
-            </Text>
-          </View>
+          {this.renderNote('Be yourself; everyone else is already taken.', 'Oscar Wilde')}
+          {this.renderNote('Nothing is impossible, the word itself says "I\'m possible"!', 'Audrey Hepburn')}
+          {this.renderNote('Fantasy is hardly an escape from reality. It\'s a way of understanding it.', 'Lloyd Alexander')}
         </View>
         <Button title="Log out" onPress={this.logOut} />
         <Button title="Destroy pin" onPress={this.destroyPin} />
@@ -238,5 +255,13 @@ const styles = StyleSheet.create({
   },
   noteTextStyle: {
     fontSize: 18,
+  },
+  authorTextStyle: {
+    color: 'grey',
+    fontStyle: 'italic',
+    position: 'absolute',
+    right: 10,
+    bottom: 10,
+    textAlign: 'right',
   },
 });
